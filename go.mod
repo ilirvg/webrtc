@@ -37,3 +37,6 @@ require (
 // SCTP ZeroChecksum implementation has a interoperability bug
 // 3.2.28 can only work against itself, not other versions of webrtc
 retract v3.2.28
+
+// 🚀 SOCKET BUFFER TUNING: Use local ICE fork with socket buffer support
+replace github.com/pion/ice/v2 => ../ice-pion-fork

@@ -123,6 +123,10 @@ func (g *ICEGatherer) createAgent() error {
 		ProxyDialer:            g.api.settingEngine.iceProxyDialer,
 		DisableActiveTCP:       g.api.settingEngine.iceDisableActiveTCP,
 		BindingRequestHandler:  g.api.settingEngine.iceBindingRequestHandler,
+
+		// 🚀 SOCKET BUFFER TUNING: Pass UDP socket buffer sizes from SettingEngine
+		UDPReadBufferSize:  g.api.settingEngine.udpSocketBuffers.readBufferSize,
+		UDPWriteBufferSize: g.api.settingEngine.udpSocketBuffers.writeBufferSize,
 	}
 
 	requestedNetworkTypes := g.api.settingEngine.candidates.ICENetworkTypes

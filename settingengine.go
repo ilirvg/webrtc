@@ -94,6 +94,12 @@ type SettingEngine struct {
 	disableMediaEngineCopy                    bool
 	srtpProtectionProfiles                    []dtls.SRTPProtectionProfile
 	receiveMTU                                uint
+
+	// 🚀 SOCKET BUFFER TUNING: UDP socket buffer configuration
+	udpSocketBuffers struct {
+		readBufferSize  uint32
+		writeBufferSize uint32
+	}
 }
 
 // getReceiveMTU returns the configured MTU. If SettingEngine's MTU is configured to 0 it returns the default
@@ -452,4 +458,17 @@ func (e *SettingEngine) EnableSCTPZeroChecksum(isEnabled bool) {
 // - Implement custom CandidatePair switching logic
 func (e *SettingEngine) SetICEBindingRequestHandler(bindingRequestHandler func(m *stun.Message, local, remote ice.Candidate, pair *ice.CandidatePair) bool) {
 	e.iceBindingRequestHandler = bindingRequestHandler
+}
+
+// 🚀 SOCKET BUFFER TUNING: SetUDPSocketBuffers configures UDP socket buffer sizes to reduce syscall overhead
+// This can help improve performance by reducing the frequency of system calls for UDP operations.
+//
+// readBufferSize: Size of the operating system's receive buffer for UDP sockets (in bytes)
+// writeBufferSize: Size of the operating system's transmit buffer for UDP sockets (in bytes)
+//
+// Setting these to 0 will use the operating system defaults.
+// Recommended values for high-performance scenarios: 64KB to 1MB per buffer.
+func (e *SettingEngine) SetUDPSocketBuffers(readBufferSize, writeBufferSize uint32) {
+	e.udpSocketBuffers.readBufferSize = readBufferSize
+	e.udpSocketBuffers.writeBufferSize = writeBufferSize
 }
