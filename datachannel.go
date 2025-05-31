@@ -404,6 +404,36 @@ func (d *DataChannel) SendText(s string) error {
 	return err
 }
 
+// 🚀 MULTICAST OPTIMIZATION: SendBatch sends multiple binary messages efficiently
+// This reduces CGO overhead by batching multiple datachannel messages into a single operation
+func (d *DataChannel) SendBatch(data [][]byte) error {
+	err := d.ensureOpen()
+	if err != nil {
+		return err
+	}
+
+	_, err = d.dataChannel.WriteDataChannelBatch(data, false)
+	return err
+}
+
+// 🚀 MULTICAST OPTIMIZATION: SendTextBatch sends multiple text messages efficiently
+// This reduces CGO overhead by batching multiple datachannel messages into a single operation
+func (d *DataChannel) SendTextBatch(messages []string) error {
+	err := d.ensureOpen()
+	if err != nil {
+		return err
+	}
+
+	// Convert strings to byte slices
+	data := make([][]byte, len(messages))
+	for i, msg := range messages {
+		data[i] = []byte(msg)
+	}
+
+	_, err = d.dataChannel.WriteDataChannelBatch(data, true)
+	return err
+}
+
 func (d *DataChannel) ensureOpen() error {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
