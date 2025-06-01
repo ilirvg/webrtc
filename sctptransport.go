@@ -423,3 +423,9 @@ func (r *SCTPTransport) association() *sctp.Association {
 	r.lock.RUnlock()
 	return association
 }
+
+// 🚀 MULTICAST OPTIMIZATION: GetAssociation exposes the SCTP association for batching
+// This allows access to WriteSCTPBatchMultiStream for efficient multicast sending
+func (r *SCTPTransport) GetAssociation() *sctp.Association {
+	return r.association()
+}
